@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disney Cruise Date Calculator - My Mickey Vacation Travel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        .calculator-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .input-section {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 20px;
+            align-items: end;
+            flex-wrap: wrap;
+        }
+
+        .input-field {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        input[type="date"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input[type="date"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .results-section {
+            display: none;
+        }
+
+        .results-section.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .countdown-banner {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(245, 87, 108, 0.3);
+        }
+
+        .countdown-banner h2 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .countdown-banner p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        .milestones-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .milestone-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .milestone-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .milestone-card h3 {
+            color: #667eea;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .milestone-date {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .milestone-countdown {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .milestone-status {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .status-upcoming {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .status-passed {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .status-today {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .info-section {
+            background: #f0f4ff;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 25px;
+        }
+
+        .info-section h3 {
+            color: #667eea;
+            margin-bottom: 12px;
+        }
+
+        .info-section p {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+            
+            .input-field {
+                width: 100%;
+            }
+            
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚢 Disney Cruise Date Calculator</h1>
+            <p>Plan your magical voyage with confidence - know all your important dates!</p>
+        </div>
+
+        <div class="calculator-card">
+            <div class="input-section">
+                <div class="input-group">
+                    <div class="input-field">
+                        <label for="sailDate">Select Your Sail Date:</label>
+                        <input type="date" id="sailDate" required>
+                    </div>
+                    <button onclick="calculateDates()">Calculate Important Dates</button>
+                </div>
+            </div>
+
+            <div class="results-section" id="results">
+                <div class="countdown-banner" id="countdownBanner">
+                    <h2 id="daysUntilCruise"></h2>
+                    <p id="cruiseDate"></p>
+                </div>
+
+                <h3 style="color: #667eea; margin-bottom: 20px; font-size: 1.3rem;">📅 Important Milestones</h3>
+                
+                <div class="milestones-grid" id="milestonesGrid">
+                    <!-- Milestones will be inserted here -->
+                </div>
+
+                <div class="info-section">
+                    <h3>💡 Planning Tips from My Mickey Vacation Travel</h3>
+                    <p><strong>Final Payment:</strong> Must be paid in full to avoid cancellation. Set a reminder!</p>
+                    <p><strong>Online Check-in:</strong> Complete as soon as it opens to select your Port Arrival Time and upload required documents.</p>
+                    <p><strong>Booking Window:</strong> Book shore excursions, spa treatments, and adult dining at your booking window for the best availability.</p>
+                    <p><strong>Packing:</strong> Start your packing list early. Don't forget formal wear for optional formal nights!</p>
+                    <p><strong>Travel Insurance:</strong> Consider adding travel insurance before your final payment date for maximum coverage.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function calculateDates() {
+            const sailDateInput = document.getElementById('sailDate').value;
+            
+            if (!sailDateInput) {
+                alert('Please select a sail date');
+                return;
+            }
+
+            const sailDate = new Date(sailDateInput + 'T12:00:00');
+            const today = new Date();
+            today.setHours(12, 0, 0, 0);
+            
+            // Calculate days until cruise
+            const daysUntil = Math.floor((sailDate - today) / (1000 * 60 * 60 * 24));
+            
+            // Update countdown banner
+            const countdownBanner = document.getElementById('countdownBanner');
+            const daysUntilElement = document.getElementById('daysUntilCruise');
+            const cruiseDateElement = document.getElementById('cruiseDate');
+            
+            if (daysUntil > 0) {
+                daysUntilElement.textContent = `${daysUntil} Days Until Your Disney Cruise!`;
+                cruiseDateElement.textContent = `Setting sail on ${formatDate(sailDate)}`;
+            } else if (daysUntil === 0) {
+                daysUntilElement.textContent = `🎉 Bon Voyage! Today's the Day!`;
+                cruiseDateElement.textContent = `Your magical journey begins today!`;
+            } else {
+                daysUntilElement.textContent = `Your cruise has sailed`;
+                cruiseDateElement.textContent = `We hope you had a magical time!`;
+            }
+
+            // Calculate all milestone dates
+            const milestones = [
+                {
+                    name: 'Online Check-in Opens',
+                    date: subtractDays(sailDate, 30),
+                    description: 'Complete check-in & select Port Arrival Time'
+                },
+                {
+                    name: 'Booking Window Opens (First-Time Cruisers)',
+                    date: subtractDays(sailDate, 75),
+                    description: 'Book excursions, dining, and spa'
+                },
+                {
+                    name: 'Booking Window Opens (Castaway Club)',
+                    date: subtractDays(sailDate, 90),
+                    description: 'Silver members and above'
+                },
+                {
+                    name: 'Booking Window Opens (Platinum/Pearl)',
+                    date: subtractDays(sailDate, 120),
+                    description: 'Platinum and Pearl Castaway Club members'
+                },
+                {
+                    name: 'Final Payment Due',
+                    date: subtractDays(sailDate, 90),
+                    description: 'Payment must be received in full'
+                },
+                {
+                    name: 'Cancellation Penalty Begins (25%)',
+                    date: subtractDays(sailDate, 89),
+                    description: '25% penalty if cancelled'
+                },
+                {
+                    name: 'Cancellation Penalty Increases (50%)',
+                    date: subtractDays(sailDate, 59),
+                    description: '50% penalty if cancelled'
+                },
+                {
+                    name: 'Cancellation Penalty Increases (75%)',
+                    date: subtractDays(sailDate, 44),
+                    description: '75% penalty if cancelled'
+                },
+                {
+                    name: 'No Refund Period Begins',
+                    date: subtractDays(sailDate, 14),
+                    description: '100% penalty - no refund if cancelled'
+                },
+                {
+                    name: 'Travel Documents Deadline',
+                    date: subtractDays(sailDate, 3),
+                    description: 'All documents must be uploaded'
+                }
+            ];
+
+            // Sort milestones by date
+            milestones.sort((a, b) => a.date - b.date);
+
+            // Generate milestone cards
+            const milestonesGrid = document.getElementById('milestonesGrid');
+            milestonesGrid.innerHTML = '';
+
+            milestones.forEach(milestone => {
+                const card = createMilestoneCard(milestone, today);
+                milestonesGrid.appendChild(card);
+            });
+
+            // Show results
+            document.getElementById('results').classList.add('active');
+        }
+
+        function createMilestoneCard(milestone, today) {
+            const card = document.createElement('div');
+            card.className = 'milestone-card';
+
+            const daysUntil = Math.floor((milestone.date - today) / (1000 * 60 * 60 * 24));
+            
+            let status = 'status-upcoming';
+            let statusText = 'Upcoming';
+            let countdownText = `${Math.abs(daysUntil)} days away`;
+            
+            if (daysUntil < 0) {
+                status = 'status-passed';
+                statusText = 'Passed';
+                countdownText = `${Math.abs(daysUntil)} days ago`;
+            } else if (daysUntil === 0) {
+                status = 'status-today';
+                statusText = 'Today!';
+                countdownText = 'Action required today';
+            }
+
+            card.innerHTML = `
+                <h3>${milestone.name}</h3>
+                <div class="milestone-date">${formatDate(milestone.date)}</div>
+                <div class="milestone-countdown">${countdownText}</div>
+                <div class="milestone-status ${status}">${statusText}</div>
+                <p style="margin-top: 10px; font-size: 0.9rem; color: #666;">${milestone.description}</p>
+            `;
+
+            return card;
+        }
+
+        function subtractDays(date, days) {
+            const result = new Date(date);
+            result.setDate(result.getDate() - days);
+            return result;
+        }
+
+        function formatDate(date) {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            return date.toLocaleDateString('en-US', options);
+        }
+
+        // Set minimum date to today
+        document.getElementById('sailDate').min = new Date().toISOString().split('T')[0];
+    </script>
+</body>
+</html>
